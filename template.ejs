@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title><%= htmlTitle %></title>
+<link rel="stylesheet" href="<%= basePath %>css/style.css">
+</head>
+<body>
+<%
+const itemR = excelData.filter((e)=>{return e.種類 === 'レギュラー'});
+const itemS = excelData.filter((e)=>{return e.種類 === 'サイド'});
+
+let genItem = (o)=>{
+    let param, url;
+    if (o.URL) { 
+        param = o.URL.indexOf('?') === -1 ? '?' + urlParam : '&amp;' + urlParam;
+        if (o.URL.indexOf('#') === -1) {
+            url = o.URL + param;
+        } else {
+            let urlStr = o.URL.split('#');
+            url = urlStr[0] + param + '#' + urlStr[1];
+        }
+    } %>
+    <dl>
+        <dt><% if (o.URL) { %><a href="<%= url %>" target="_blank"><% } %><%= o.商品名 %><% if (o.URL) { %></a><% } %></dt>
+        <dd class="image"><%
+            if (o.URL) { %><a href="<%= url %>" target="_blank"><% }
+            if (o.画像) {
+                %><img src="<%= basePath %><%= baseName %>/<%= o.画像 %>" alt="イメージ" /><%
+            }else{
+                %><span style="display:table-cell; with:200px; height:200px; padding:5px; box-sizing:border-box; color:#000; text-align:center; text-decoration:none; vertical-align:middle; background-color:#ccc;">no image</span><%
+            }
+            if (o.URL) { %></a><% }
+        %></dd>
+        <dd class="text">
+            <%- o.説明.replace(/\n|\r\n|\r/g, '<br>') %>
+        </dd>
+    </dl>
+<% }; %>
+
+<div id="wrapper">
+<h1><%= htmlTitle %></h1>
+
+<div id="products">
+<% if(itemR.length){ %>
+    <!-- regular -->
+    <ul class="regular">
+    <% for(let i=0; i<itemR.length; i++){ %>
+        <li>
+            <%- genItem(itemR[i]); %>
+        </li>
+    <% } %>
+    </ul>
+    <!-- /regular -->
+<% } %>
+
+<% if(itemS.length){ %>
+    <!-- side -->
+    <ul class="side">
+    <% for(let i=0; i<itemS.length; i++){ %>
+        <li>
+            <%- genItem(itemS[i]); %>
+        </li>
+    <% } %>
+    </ul>
+    <!-- /side -->
+<% } %>
+</div>
+
+<div id="footer">Copyright &copy; COMPANY NAME. All rights reserved.</div>
+
+</div><!-- /wrapper -->
+</body>
+</html>
